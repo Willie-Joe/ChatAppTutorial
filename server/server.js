@@ -19,7 +19,27 @@ let io = sockerIO(server);
 // callback when client makes connection
 io.on("connection", (socket) => {
     console.log("New user has connected");
-    
+
+    socket.emit("newMessage", {
+        from: "Admin", message: "Welcome to Chat App", createdAt: new Date().getTime()
+    });
+
+    socket.broadcast.emit("newMessage",
+    { from: "Admin", message: "new user joined", createAt: new Date().getTime() }
+)
+
+
+
+    // when message created
+    socket.on("createMsg", (msg) => {
+        console.log("Create message", msg);
+        //io broadcat to all connected
+        // io.emit("newMessage", { from: msg.from, message: msg.message, createAt: new Date().getTime() });
+        //sends to all connections except socket
+
+    })
+
+
     // callback when client is disconnected 
     socket.on("disconnect", () => { console.log("disconnected from server") });
 });
