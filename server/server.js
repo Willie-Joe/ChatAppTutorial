@@ -3,7 +3,7 @@ const express = require("express");
 const http = require("http")
 const sockerIO = require("socket.io");
 
-
+const {generateMessage} = require("./utils/message");
 // path to access public directory
 const publicPath = path.join(__dirname, "/../public");
 
@@ -20,22 +20,21 @@ let io = sockerIO(server);
 io.on("connection", (socket) => {
     console.log("New user has connected");
 
-    socket.emit("newMessage", {
-        from: "Admin", message: "Welcome to Chat App", createdAt: new Date().getTime()
-    });
+    socket.emit("newMessage", generateMessage("Admin", "Welcome to Chat App"));
 
+    //sends to all connections except socket
     socket.broadcast.emit("newMessage",
-    { from: "Admin", message: "new user joined", createAt: new Date().getTime() }
+    generateMessage("Admin","A new user joined")
 )
 
 
 
     // when message created
-    socket.on("createMsg", (msg) => {
+    socket.on("createMessage", (msg, callback) => {
         console.log("Create message", msg);
         //io broadcat to all connected
-        // io.emit("newMessage", { from: msg.from, message: msg.message, createAt: new Date().getTime() });
-        //sends to all connections except socket
+         io.emit("newMessage", generateMessage(msg.from,msg.text));
+        callback("this is the server");
 
     })
 
