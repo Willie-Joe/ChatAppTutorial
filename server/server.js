@@ -3,7 +3,7 @@ const express = require("express");
 const http = require("http")
 const sockerIO = require("socket.io");
 
-const {generateMessage} = require("./utils/message");
+const {generateMessage, generateLocationMessage} = require("./utils/message");
 // path to access public directory
 const publicPath = path.join(__dirname, "/../public");
 
@@ -38,6 +38,10 @@ io.on("connection", (socket) => {
 
     })
 
+    //handler for location message
+    socket.on("createLocationMessage",(coords)=>{
+        io.emit("newLocationMessage",generateLocationMessage("Admin",coords.lat, coords.long))
+    })
 
     // callback when client is disconnected 
     socket.on("disconnect", () => { console.log("disconnected from server") });
