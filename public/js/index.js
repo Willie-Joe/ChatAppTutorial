@@ -3,40 +3,65 @@ let socket = io();
 
 // callback when connected to server
 socket.on("connect", function () {
-    console.log("connected to server")
+    console.log("connected to server");
+    // let params = JSON.parse('{"' + decodeURI(params).replace(/&/g, '","').replace(/\+/g, ' ').replace(/=/, '":"') + '"}');
 
-    // // send event "createMessage" with message object
-    // socket.emit("createMessage", { from: "bob", message: "hello world" });
+    // socket.emit("john", params, function (err) {
+    //     if (err) {
+    //         alert("invalid inpout fields");
+    //     } else {
+
+    //     }
+    // })
 
 });
 
 socket.on("newMessage", function (message) {
-    console.log("new message from server", message);
-    let li = document.createElement("li");
+    const template = document.querySelector("#message-template").innerHTML;
     const formatedTime = moment(message.createdAt).format("LT");
+    // render th
+    const html = Mustache.render(template, { from: message.from, text: message.text, createdAt: formatedTime });
 
-    li.innerText = `${formatedTime}- ${message.from}: ${message.text}`;
-    document.querySelector('body').appendChild(li);
+    const div = document.createElement("div");
+    div.innerHTML = html;
+    document.querySelector("#messages").appendChild(div);
+    scrollToBottom();
+    // console.log("new message from server", message);
+    // let li = document.createElement("li");
+    // const formatedTime = moment(message.createdAt).format("LT");
+
+    // li.innerText = `${formatedTime}- ${message.from}: ${message.text}`;
+    // document.querySelector('body').appendChild(li);
 })
 
 socket.on("newLocationMessage", function (message) {
-    console.log("newLocationMessage from server", message);
-    let li = document.createElement("li");
-    let a = document.createElement("a");
-
+    const template = document.querySelector("#location-message-template").innerHTML;
     const formatedTime = moment(message.createdAt).format("LT");
+    // render th
+    const html = Mustache.render(template, { from: message.from, url: message.url, createdAt: formatedTime });
+
+    const div = document.createElement("div");
+    div.innerHTML = html;
+    document.querySelector("#messages").appendChild(div);
+    scrollToBottom();
+
+    // console.log("newLocationMessage from server", message);
+    // let li = document.createElement("li");
+    // let a = document.createElement("a");
+
+    // const formatedTime = moment(message.createdAt).format("LT");
 
 
-    // open new tab
-    a.setAttribute("target", "_blank");
-    a.setAttribute("href", message.url);
-    li.innerText = `${formatedTime}- ${message.from}: `;
-    a.innerText = "My current location";
-    // li.innerHTML = a;
-    // li.innerText = `${message.from}:  ${message.text}`;
-    li.appendChild(a)
+    // // open new tab
+    // a.setAttribute("target", "_blank");
+    // a.setAttribute("href", message.url);
+    // li.innerText = `${formatedTime}- ${message.from}: `;
+    // a.innerText = "My current location";
+    // // li.innerHTML = a;
+    // // li.innerText = `${message.from}:  ${message.text}`;
+    // li.appendChild(a)
 
-    document.querySelector('body').appendChild(li);
+    // document.querySelector('body').appendChild(li);
 })
 
 // callback when disconnected from server
@@ -84,3 +109,8 @@ document.querySelector("#send-location").addEventListener("click", function (e) 
     e.preventDefault();
 
 });
+
+function scrollToBottom() {
+    let messages = document.querySelector("#messages").lastElementChild;
+    messages.scrollIntoView()
+}

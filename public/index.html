@@ -4,25 +4,57 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/styles.css">
     <title>Document</title>
 </head>
+<script src="/socket.io/socket.io.js"></script>
+
+
+
+<script type="text/template" id="message-template">
+    <li class="message">
+        <div class="message__title"> 
+            <h4>{{from}}</h4>
+            <span>{{createdAt}}</span>
+                
+        </div>
+        <div class="message__body">
+            <p>{{text}}</p>
+        </div>
+    </li>
+</script>
+
+<script type="text/template" id="location-message-template">
+    <li class="message">
+        <div class="message__title"> 
+            <h4>{{from}}</h4>
+            <span>{{createdAt}}</span>
+                
+        </div>
+        <div class="message__body">
+            <a href="{{url}}" target="_blank">My current Location</a>
+        </div>
+    </li>
+</script>
 
 <body>
     <p>Welcome to Chat App</p>
 
-    <form id="message-form">
-<input type="text" name="message"
-placeholder="enter message here">
-<button type="submit" id="submit-btn">Submit</button>
-    </form>
+    <div class="chat__main">
+        <ol id="messages" class="chat__messages"></ol>
 
-<button type="button" id="send-location">Send Location</button>
-
-    <script src="/socket.io/socket.io.js"></script>
-
-    <!-- make connection to server -->
-    <script type="text/javascript" src="/js/index.js"></script>
-    <script type="text/javascript" src="/js/libs/moment.js"></script>
+        <div class="chat__footer">
+            <form id="message-form">
+                <input type="text" name="message" placeholder="enter message here">
+                <button type="submit" id="submit-btn">Submit</button>
+            </form>
+            <button type="button" id="send-location">Send Location</button>
+        </div>
+    </div>
 </body>
+<!-- make connection to server -->
+<script type="text/javascript" src="/js/index.js"></script>
+<script type="text/javascript" src="/js/libs/moment.js"></script>
+<script type="text/javascript" src="/js/libs/mustache.js"></script>
 
 </html>
