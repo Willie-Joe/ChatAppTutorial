@@ -4,17 +4,41 @@ let socket = io();
 // callback when connected to server
 socket.on("connect", function () {
     console.log("connected to server");
-    // let params = JSON.parse('{"' + decodeURI(params).replace(/&/g, '","').replace(/\+/g, ' ').replace(/=/, '":"') + '"}');
 
-    // socket.emit("john", params, function (err) {
-    //     if (err) {
-    //         alert("invalid inpout fields");
-    //     } else {
+    // get info pass to uri
+    let searchQuery = window.location.search.substring(1);
+    let params = JSON.parse('{"' + decodeURI(searchQuery)
+        .replace(/&/g, '","')
+        .replace(/\+/g, ' ')
+        .replace(/=/g, '":"') + '"}');
 
-    //     }
-    // })
+
+    socket.emit("join", params, function (err) {
+        if (err) {
+            alert(err);
+            window.location.href = "/"
+        } else {
+            console.log("no err");
+        }
+    })
 
 });
+
+// listen for connected users
+socket.on("updateUsersList", function (users) {
+    console.log("users", users);
+    let ol = document.createElement("ol");
+    users.forEach(function (user) {
+        let li = document.createElement("li");
+        li.innerHTML = user;
+        ol.appendChild(li);
+    })
+
+    let userList = document.querySelector("#users");
+    userList.innerHTML = "";
+    userList.appendChild(ol);
+})
+
 
 socket.on("newMessage", function (message) {
     const template = document.querySelector("#message-template").innerHTML;
@@ -76,7 +100,7 @@ document.querySelector("#submit-btn").addEventListener("click", function (e) {
     e.preventDefault();
 
     socket.emit("createMessage", {
-        from: "User",
+        // from: "User",
         text: document.querySelector('input[name="message"]').value
     }, function () {
 
